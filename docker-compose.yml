@@ -1,0 +1,24 @@
+services:
+  fallguard:
+    build:
+      context: .
+    image: fallguard-lite:local
+    init: true
+    ports:
+      - "127.0.0.1:8000:8000"
+    environment:
+      MODEL_DEVICE: cpu
+      MODEL_IMAGE_SIZE: "640"
+      MODEL_CONFIDENCE: "0.38"
+      STANDING_SECONDS: "1.0"
+      FALL_HOLD_SECONDS: "0.75"
+      RECOVERY_SECONDS: "1.0"
+      DROP_SPEED: "0.65"
+    read_only: true
+    tmpfs:
+      - /tmp:size=64m,mode=1777
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    restart: unless-stopped
