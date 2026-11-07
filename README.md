@@ -104,7 +104,9 @@ pytest
 - `WS /ws/analyze` — JPEGバイナリを受け、人物・姿勢点・状態のJSONを返す
 - `GET /api/docs` — FastAPIが生成するHTTP APIドキュメント
 
-WebSocketは既定で同一オリジンのみ許可します。リバースプロキシ構成では `ALLOWED_ORIGINS=https://example.com` のように明示してください。受信サイズは2.5 MB、デコード後は約2.1メガピクセル、最短間隔は50 msに制限されています。
+WebSocketは、Originヘッダーがある場合、既定でHostヘッダーと同じホスト・ポートのHTTP/HTTPSオリジンを許可します。リバースプロキシ構成では `ALLOWED_ORIGINS=https://example.com` のように追加するオリジンを明示してください。この設定はHostに基づく許可を置き換えません。Originなしのプログラム接続は許可され、この検査は認証や接続先Hostの制限ではありません。localhost限定で使用してください。
+
+アプリが処理するJPEGは2.5 MBまでです。JPEGヘッダーで約2.1メガピクセルの上限をデコード前に検査し、デコード後も再確認します。寸法が未確定のJPEGは受け付けません。最短間隔50 msの制限は接続ごとで、全接続を合計した資源上限ではありません。
 
 ## 既知の制約
 

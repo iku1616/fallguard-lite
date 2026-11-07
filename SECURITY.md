@@ -9,8 +9,11 @@ other personal data in a public issue.
 ## Security properties
 
 - The application does not intentionally persist received frames.
-- Browser frames are accepted only over a same-origin WebSocket by default.
-- JPEG size and decoded pixel count are limited before inference.
+- Browser Origin headers are checked against the request Host and any configured
+  additional origins. Clients without an Origin header are allowed; this is not
+  authentication or a trusted-Host allowlist. Keep the service on localhost.
+- JPEG byte size and header pixel count are checked before native decoding;
+  decoded pixel count is checked again before inference.
 - The provided container runs as an unprivileged user and Compose drops Linux
   capabilities, uses a read-only root filesystem, and binds only to localhost.
 - Model files can be pinned with `MODEL_SHA256`; the supplied image creates and

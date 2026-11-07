@@ -15,6 +15,7 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
 from app.detector import PoseModel, SessionAnalyzer
+from app.jpeg import jpeg_dimensions
 
 BASE_DIR = Path(__file__).resolve().parent
 STATIC_DIR = BASE_DIR / "static"
@@ -86,8 +87,14 @@ def _decode_frame(payload: bytes):  # type: ignore[no-untyped-def]
         raise ValueError("frame_size")
     if len(payload) < 4 or payload[:3] != b"\xff\xd8\xff":
         raise ValueError("frame_format")
+    width, height = jpeg_dimensions(payload)
+    if width * height > MAX_FRAME_PIXELS:
+        raise ValueError("frame_dimensions")
     encoded = np.frombuffer(payload, dtype=np.uint8)
-    frame = cv2.imdecode(encoded, cv2.IMREAD_COLOR)
+    try:
+        frame = cv2.imdecode(encoded, cv2.IMREAD_COLOR)
+    except cv2.error as exc:
+        raise ValueError("frame_decode") from exc
     if frame is None or frame.ndim != 3 or frame.shape[2] != 3:
         raise ValueError("frame_decode")
     height, width = frame.shape[:2]
