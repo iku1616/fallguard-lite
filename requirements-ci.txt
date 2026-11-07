@@ -1,6 +1,6 @@
 fastapi==0.162.0
 httpx==0.28.1
-numpy==2.3.5
+numpy==2.4.6
 opencv-python-headless==4.14.0.94
 pytest==9.2.0
 ruff==0.17.3
